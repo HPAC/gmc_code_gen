@@ -1,80 +1,62 @@
-add_library(cblas_extended SHARED
-            # cblas Mult kernels
-            cblas_ddidimm.cpp
-            cblas_ddimm.cpp
-            cblas_ddisymm.cpp
-            cblas_dditrmm.cpp
-            cblas_dsysymm.cpp
-            cblas_dtrsymm.cpp
-            cblas_dtrtrmm.cpp
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+project(GMC-GEN LANGUAGES CXX C)
 
-            # cblas system solver kernels
-            cblas_ddidisv.cpp
-            cblas_ddisv.cpp
-            cblas_ddisysv.cpp
-            cblas_dditrsv.cpp
-            cblas_dgedisv.cpp
-            cblas_dgegesv.cpp
-            cblas_dgesysv.cpp
-            cblas_dgetrsv.cpp
-            cblas_dpodisv.cpp
-            cblas_dpogesv.cpp
-            cblas_dposysv.cpp
-            cblas_dpotrsv.cpp
-            cblas_dsydisv.cpp
-            cblas_dsygesv.cpp
-            cblas_dsysysv.cpp
-            cblas_dsytrsv.cpp
-            cblas_dtrdisv.cpp
-            cblas_dtrsysv.cpp
-            cblas_dtrtrsv.cpp
+# Enable different parts of the system
+option(WITH_TESTS "Enable Tests" YES) # depends on extended_cblas
+option(WITH_EXPERIMENTS "Enable Experiments" YES) 
 
-            # Mult kernels
-            base/ddidimm.cpp
-            base/ddimm.cpp
-            base/ddisymm.cpp
-            base/dditrmm.cpp
-            base/dsysymm.cpp
-            base/dtrsymm.cpp
-            base/dtrtrmm.cpp
-
-            # System solver kernels
-            base/ddidisv.cpp
-            base/ddisv.cpp
-            base/ddisysv.cpp
-            base/dditrsv.cpp
-            base/dgedisv.cpp
-            base/dgegesv.cpp
-            base/dgesysv.cpp
-            base/dgetrsv.cpp
-            base/dpodisv.cpp
-            base/dpogesv.cpp
-            base/dposysv.cpp
-            base/dpotrsv.cpp
-            base/dsydisv.cpp
-            base/dsygesv.cpp
-            base/dsysysv.cpp
-            base/dsytrsv.cpp
-            base/dtrdisv.cpp
-            base/dtrsysv.cpp
-            base/dtrtrsv.cpp
-            
-            # Aux functions
-            base/sy2full.cpp
-            base/dge_trans.cpp
-            base/dlacpy.cpp
-            base/dlaswp2.cpp
-            base/dlaswp3.cpp
-            base/dlaswp4.cpp
-            base/dbdigesv.cpp
-           )
-
-if (OpenMP_CXX_FOUND)
-    target_link_libraries(cblas_extended PUBLIC ${BLAS_LIBRARIES} PRIVATE OpenMP::OpenMP_CXX)
-elseif()
-    target_link_libraries(cblas_extended PUBLIC ${BLAS_LIBRARIES})
+if (WITH_EXPERIMENTS)
+    set(WITH_ARMADILLO YES)
 endif()
 
-target_compile_options(cblas_extended PUBLIC ${comp_flags})
 
+set(BLA_VENDOR OpenBLAS)
+find_package(BLAS REQUIRED)
+
+find_package(OpenMP)
+
+# If the host is in HPC2N, adapt the paths for FMT and Armadillo
+cmake_host_system_information(RESULT machine_name QUERY HOSTNAME)
+if (${machine_name} MATCHES "hpc2n")
+    set(fmt_DIR "/proj/nobackup/gmc_bench/Projects/fmt/build")
+    set(ARMADILLO_INCLUDE_DIR "$ENV{HOME}/include")
+    set(ARMADILLO_LIBRARY "$ENV{HOME}/lib/libarmadillo.so.14.6.1")
+endif()
+
+if (WITH_ARMADILLO)
+    find_package(Armadillo REQUIRED)
+    if (ARMADILLO_FOUND)
+        message(STATUS "Armadillo library in: ${ARMADILLO_LIBRARY}")
+    else()
+        message(STATUS "ERROR: Could not find Armadillo")
+    endif()
+endif()
+
+set(CMAKE_CXX_STANDARD 17)
+set(comp_flags -Wall -O3 -march=native)# -O3 -march=native
+
+# create a dir for models
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/models") # dir for models
+
+set(TMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/tmp") # set the tmp dir
+file(MAKE_DIRECTORY "${TMP_DIR}") # create it
+# @warning: we copy the file with the expressions used in experiments.
+file(COPY ${CMAKE_SOURCE_DIR}/tmp/expr_exp2.txt DESTINATION ${TMP_DIR})
+
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/times") # dir for generated timings
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/times/vars")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/times/arma")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/generated_code")
+
+add_subdirectory(src)
+add_subdirectory(cblas_extended)
+add_subdirectory(code_generator)
+
+if(WITH_TESTS)
+    add_subdirectory(test)
+endif()
+
+if(WITH_EXPERIMENTS)
+    add_subdirectory(experiments)
+endif()
 
