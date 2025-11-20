@@ -1,0 +1,7 @@
+Matrix A <Dense, None>;
+Matrix B <Dense, None>;
+Matrix C <Dense, None>;
+Matrix D <Dense, None>;
+Matrix E <Dense, None>;
+
+A * B * C * D * E;

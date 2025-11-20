@@ -1,0 +1,9 @@
+Matrix A <Dense, None>;
+Matrix B <Dense, None>;
+Matrix C <Dense, FullRank>;
+Matrix D <SymmetricLower, SPD>;
+Matrix E <Diagonal, None>;
+Matrix F <Upper, None>;
+Matrix G <Dense, None>;
+
+A * B * inv(C) * inv(D) * E * F * G;

@@ -1,0 +1,9 @@
+Matrix A <Lower, None>;
+Matrix B <Lower, None>;
+Matrix C <Upper, None>;
+Matrix D <Upper, None>;
+Matrix E <Lower, None>;
+Matrix F <Lower, None>;
+Matrix G <Upper, None>;
+
+A * B * C * D * E * F * G;
