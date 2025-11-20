@@ -1,0 +1,26 @@
+Reserved words:
+- Structures:
+  - Dense
+  - Symmetric
+  - Lower
+  - UnitLower
+  - Upper
+  - UnitUpper
+  - Diagonal
+- Properties:
+  - None
+  - FullRank
+  - SPD
+  - Orthogonal
+
+Tokens:
+- Matrix
+- inv
+- trans
+- <
+- >
+- (
+- )
+- ;
+- ,
+- *

@@ -1,0 +1,2 @@
+#cmakedefine PATH_ARMA_CODE "@PATH_ARMA_CODE@"
+#include PATH_ARMA_CODE

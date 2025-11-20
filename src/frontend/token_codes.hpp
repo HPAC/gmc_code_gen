@@ -1,0 +1,13 @@
+#define IDENT 10
+#define TK_MATRIX 11
+#define STRUCTURE 12
+#define PROPERTY 13
+#define LEFT_ANGLE 14
+#define RIGHT_ANGLE 15
+#define LEFT_PARENTH 16
+#define RIGHT_PARENTH 17
+#define COMMA 18
+#define SEMICOLON 19
+#define MULT_OP 20
+#define TRANS_OP 21
+#define INV_OP 22
