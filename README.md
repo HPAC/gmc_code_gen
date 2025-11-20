@@ -108,10 +108,14 @@ We provide an executable as the main entry point for code generation.
 The executable is `code_generator/main.cpp` and has 5 positional arguments:
 
 1. `<fname_input>`: String. Path to the file with the input GMC according to the grammar defined in the paper.
+
 2. `<K>`: Positive integer. Maximum number of variants to generate. Should be less than the maximum number of variants for the shape.
+
 3. `<N_t>`: Positive integer. Number of instances to use while choosing the generated sets.
+
 4. `<flops/models>`: String. Whether to use FLOPs or performance models for set expansion.
-5. `id_F`: Positive integer. Objective function to minimize while expanding the set of variants. 0 for maximum penalty; 1 for average penalty.
+
+5. `<id_F>`: Positive integer. Objective function to minimize while expanding the set of variants. 0 for maximum penalty; 1 for average penalty.
 
 We provide some exemplary inputs to the code generator in `inputs/`.
 An example of a full command line use of the code generator is (from the `build/` directory):
